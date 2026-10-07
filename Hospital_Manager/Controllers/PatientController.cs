@@ -100,7 +100,7 @@ namespace Hospital_Manager.Controllers
             }
             await LoadDoctors(model.DoctorIds);
             return View(model);
-            
+
         }
 
         public async Task<IActionResult> Edit(int id)
@@ -109,7 +109,7 @@ namespace Hospital_Manager.Controllers
                 .Include(p => p.DoctorPatients)
                 .FirstOrDefaultAsync(p => p.Id == id);
 
-            if(patient == null)
+            if (patient == null)
             {
                 return NotFound();
             }
@@ -129,6 +129,83 @@ namespace Hospital_Manager.Controllers
 
             await LoadDoctors(model.DoctorIds);
             return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Edit(int id, PatientEditViewModel model)
+        {
+            if (id != model.Id)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                var patient = await context.Patients
+                    .Include(p => p.DoctorPatients)
+                    .FirstOrDefaultAsync(p => p.Id == id);
+
+                if (patient == null)
+                {
+                    return NotFound();
+                }
+
+                patient.FirstName = model.FirstName;
+                patient.LastName = model.LastName;
+                patient.Email = model.Email;
+                patient.PhoneNumber = model.PhoneNumber;
+
+                patient.DoctorPatients.Clear();
+
+                foreach (var doctorId in model.DoctorIds)
+                {
+                    patient.DoctorPatients.Add(new DoctorPatient
+                    {
+                        DoctorId = doctorId,
+                        PatientId = patient.Id
+                    });
+                }
+
+                await context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+
+            await LoadDoctors(model.DoctorIds);
+            return View(model);
+        }
+
+        public async Task<IActionResult> Delete(int id)
+        {
+            var patient = await context.Patients.FindAsync(id);
+
+            if (patient == null)
+            {
+                return NotFound();
+            }
+
+            var model = new PatientDeleteViewModel
+            {
+                Id = patient.Id,
+                FirstName = patient.FirstName,
+                LastName = patient.LastName
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ActionName("Delete")]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var patient = await context.Patients.FindAsync(id);
+
+            if (patient != null)
+            {
+                context.Patients.Remove(patient);
+                await context.SaveChangesAsync();
+            }
+
+            return RedirectToAction(nameof(Index));
         }
 
         private async Task LoadDoctors(List<int> selectedDoctors = null)

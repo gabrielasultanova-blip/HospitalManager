@@ -1,4 +1,5 @@
-﻿namespace Hospital_Manager.ViewModels.Doctor
+﻿using Hospital_Manager.Models;
+namespace Hospital_Manager.ViewModels.Doctor
 {
     public class DoctorDetailsViewModel
     {
@@ -15,5 +16,7 @@
         public string PhoneNumber { get; set; }
 
         public string HospitalName { get; set; }
+
+
     }
 }
