@@ -6,24 +6,24 @@ using Microsoft.EntityFrameworkCore;
 using Hospital_Manager.ViewModels.Hospital;
 using Hospital_Manager.ViewModels.Patient;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Hospital_Manager_Core.Interfaces;
 
 namespace Hospital_Manager.Controllers
 {
     public class PatientController : Controller
     {
-        private readonly HospitalDbContext context;
+        private readonly IPatientService patientService;
+        private readonly IDoctorService doctorService;
 
-        public PatientController(HospitalDbContext context)
+        public PatientController(IPatientService patientService, IDoctorService doctorService)
         {
-            this.context = context;
+            this.patientService = patientService;
+            this.doctorService = doctorService;
         }
 
         public async Task<IActionResult> Index()
         {
-            var patients = await context.Patients
-                .Include(p => p.DoctorPatients)
-                .ThenInclude(dp => dp.Doctor)
-                .ToListAsync();
+            var patients = await patientService.GetAllPatientsAsync();
 
             var model = new List<PatientIndexViewModel>();
 
@@ -46,10 +46,7 @@ namespace Hospital_Manager.Controllers
 
         public async Task<IActionResult> Details(int id)
         {
-            var patient = await context.Patients
-                .Include(p => p.DoctorPatients)
-                .ThenInclude(dp => dp.Doctor)
-                .FirstOrDefaultAsync(p => p.Id == id);
+            var patient = await patientService.GetPatientByIdAsync(id);
 
             if (patient == null)
             {
@@ -94,8 +91,7 @@ namespace Hospital_Manager.Controllers
                         DoctorId = doctorId,
                     });
                 }
-                context.Patients.Add(patient);
-                await context.SaveChangesAsync();
+                await patientService.AddPatientAsync(patient);
                 return RedirectToAction(nameof(Index));
             }
             await LoadDoctors(model.DoctorIds);
@@ -105,9 +101,7 @@ namespace Hospital_Manager.Controllers
 
         public async Task<IActionResult> Edit(int id)
         {
-            var patient = await context.Patients
-                .Include(p => p.DoctorPatients)
-                .FirstOrDefaultAsync(p => p.Id == id);
+            var patient = await patientService.GetPatientByIdAsync(id);
 
             if (patient == null)
             {
@@ -141,9 +135,7 @@ namespace Hospital_Manager.Controllers
 
             if (ModelState.IsValid)
             {
-                var patient = await context.Patients
-                    .Include(p => p.DoctorPatients)
-                    .FirstOrDefaultAsync(p => p.Id == id);
+                var patient = await patientService.GetPatientByIdAsync(id);
 
                 if (patient == null)
                 {
@@ -166,7 +158,7 @@ namespace Hospital_Manager.Controllers
                     });
                 }
 
-                await context.SaveChangesAsync();
+                await patientService.UpdatePatientAsync(patient);
                 return RedirectToAction(nameof(Index));
             }
 
@@ -176,7 +168,7 @@ namespace Hospital_Manager.Controllers
 
         public async Task<IActionResult> Delete(int id)
         {
-            var patient = await context.Patients.FindAsync(id);
+            var patient = await patientService.GetPatientByIdAsync(id);
 
             if (patient == null)
             {
@@ -197,12 +189,11 @@ namespace Hospital_Manager.Controllers
         [ActionName("Delete")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var patient = await context.Patients.FindAsync(id);
+            var patient = await patientService.GetPatientByIdAsync(id);
 
             if (patient != null)
             {
-                context.Patients.Remove(patient);
-                await context.SaveChangesAsync();
+                await patientService.DeletePatientAsync(patient.Id);
             }
 
             return RedirectToAction(nameof(Index));
@@ -210,15 +201,15 @@ namespace Hospital_Manager.Controllers
 
         private async Task LoadDoctors(List<int> selectedDoctors = null)
         {
-            var doctors = await context.Doctors
-                .Select(d => new
-                {
-                    d.Id,
-                    FullName = d.FirstName + " " + d.LastName
-                }).ToListAsync();
+            var doctors = await doctorService.GetAllDoctorsAsync();
+            var doctorList = doctors.Select(d => new
+            {
+                d.Id,
+                FullName = d.FirstName + " " + d.LastName
+            }).ToList();
 
             ViewBag.Doctors = new MultiSelectList(
-                doctors,
+                doctorList,
                 "Id",
                 "FullName",
                 selectedDoctors);
