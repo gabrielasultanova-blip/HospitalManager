@@ -28,11 +28,28 @@ namespace Hospital_Manager_Core.Services
         public async Task DeleteHospitalAsync(int id)
         {
             var hospital = await context_new.Hospitals.FindAsync(id);
+
             if (hospital != null)
             {
                 hospital.IsDeleted = true;
+
+                var doctors = await context_new.Doctors
+                    .Include(d => d.DoctorPatients)
+                    .ThenInclude(dp => dp.Patient)
+                    .Where(d => d.HospitalId == id)
+                    .ToListAsync();
+
+                var patients = doctors
+                    .SelectMany(d => d.DoctorPatients)
+                    .Select(dp => dp.Patient)
+                    .Distinct()
+                    .ToList();
+
+                context_new.Patients.RemoveRange(patients);
+                context_new.Doctors.RemoveRange(doctors);
+
                 await context_new.SaveChangesAsync();
-            }   
+            }
         }
 
         public async Task<List<Hospital>> GetAllHospitalsAsync()

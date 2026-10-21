@@ -43,7 +43,7 @@ namespace Hospital_Manager.Controllers
 
         public async Task<IActionResult> Details(int id)
         {
-            var doctor = await doctorService.GetDoctorByIdAsync(id);
+            var doctor = await doctorService.GetDoctorDetailsAsync(id);
 
             if (doctor == null)
             {
@@ -58,8 +58,7 @@ namespace Hospital_Manager.Controllers
                 Specialty = doctor.Specialty,
                 Email = doctor.Email,
                 PhoneNumber = doctor.PhoneNumber,
-                HospitalName = doctor.Hospital.Name,
-
+                HospitalName = doctor.Hospital.Name
             };
 
             return View(model);

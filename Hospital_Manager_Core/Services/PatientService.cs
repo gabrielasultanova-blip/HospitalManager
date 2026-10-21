@@ -53,7 +53,10 @@ namespace Hospital_Manager_Core.Services
 
         public async Task<Patient?> GetPatientByIdAsync(int id)
         {
-            return await context_new.Patients.FindAsync(id);
+            return await context_new.Patients
+                .Include(p => p.DoctorPatients)
+                .ThenInclude(dp => dp.Doctor)
+                .FirstOrDefaultAsync(p => p.Id == id);
         }
 
         public async Task<Patient?> GetPatientWithDoctorsAsync(int id)
@@ -66,14 +69,14 @@ namespace Hospital_Manager_Core.Services
 
         public async Task UpdatePatientAsync(Patient patient, List<int> doctorIds)
         {
-            patient.DoctorPatients.Clear();
-
+            context_new.DoctorPatients.RemoveRange(context_new.DoctorPatients.Where(dp => dp.PatientId == patient.Id));
             foreach (var doctorId in doctorIds.Distinct())
             {
-               patient.DoctorPatients.Add(new DoctorPatient 
-               { DoctorId = doctorId, 
-                 PatientId = patient.Id 
-               });
+                patient.DoctorPatients.Add(new DoctorPatient
+                {
+                    DoctorId = doctorId,
+                    PatientId = patient.Id
+                });
             }
             await context_new.SaveChangesAsync();   
         }

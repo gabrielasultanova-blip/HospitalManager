@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Data_Hospital_Manager.Migrations
 {
     [DbContext(typeof(HospitalDbContext))]
-    [Migration("20261006113307_Create")]
-    partial class Create
+    [Migration("20261021095805_CreateTables")]
+    partial class CreateTables
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

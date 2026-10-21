@@ -147,18 +147,7 @@ namespace Hospital_Manager.Controllers
                 patient.Email = model.Email;
                 patient.PhoneNumber = model.PhoneNumber;
 
-                patient.DoctorPatients.Clear();
-
-                foreach (var doctorId in model.DoctorIds)
-                {
-                    patient.DoctorPatients.Add(new DoctorPatient
-                    {
-                        DoctorId = doctorId,
-                        PatientId = patient.Id
-                    });
-                }
-
-                await patientService.UpdatePatientAsync(patient);
+                await patientService.UpdatePatientAsync(patient, model.DoctorIds);
                 return RedirectToAction(nameof(Index));
             }
 

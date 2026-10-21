@@ -29,11 +29,16 @@ namespace Hospital_Manager_Core.Services
         {
             var doctor = await context_new.Doctors
                 .Include(d => d.DoctorPatients)
+                .ThenInclude(dp => dp.Patient)
                 .FirstOrDefaultAsync(d => d.Id == id);
+
             if (doctor != null)
             {
-                context_new.DoctorPatients.RemoveRange(doctor.DoctorPatients);
+                var patients = doctor.DoctorPatients
+                    .Select(dp => dp.Patient)
+                    .ToList();
 
+                context_new.Patients.RemoveRange(patients);
                 context_new.Doctors.Remove(doctor);
 
                 await context_new.SaveChangesAsync();
@@ -64,6 +69,11 @@ namespace Hospital_Manager_Core.Services
                 .Include(d => d.DoctorPatients)
                 .ThenInclude(dp => dp.Patient)
                 .FirstOrDefaultAsync(d => d.Id == id);
+        }
+
+        Task IDoctorService.AddDoctorAsync(Doctor doctor)
+        {
+            return AddDoctorAsync(doctor);
         }
     }
 }
