@@ -3,10 +3,12 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace Data_Hospital_Manager.Migrations
 {
     /// <inheritdoc />
-    public partial class CreateTables : Migration
+    public partial class CreateAll : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -92,6 +94,49 @@ namespace Data_Hospital_Manager.Migrations
                         principalTable: "Patients",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.InsertData(
+                table: "Hospitals",
+                columns: new[] { "Id", "Address", "BedsCount", "CreatedOn", "Email", "IsDeleted", "Name", "PhoneNumber" },
+                values: new object[,]
+                {
+                    { 1, "Plovdiv, Bulgaria", 300, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "city@hospital.bg", false, "City Hospital", "032123456" },
+                    { 2, "Sofia, Bulgaria", 500, new DateTime(2025, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "central@hospital.bg", false, "Central Hospital", "029876543" },
+                    { 3, "Stara Zagora, Bulgaria", 250, new DateTime(2025, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "university@hospital.bg", false, "University Hospital", "042123456" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Patients",
+                columns: new[] { "Id", "Email", "FirstName", "LastName", "PhoneNumber" },
+                values: new object[,]
+                {
+                    { 1, "petar.ivanov@gmail.com", "Petar", "Ivanov", "0899123456" },
+                    { 2, "anna.petrova@gmail.com", "Anna", "Petrova", "0899234567" },
+                    { 3, "nikolay.georgiev@gmail.com", "Nikolay", "Georgiev", "0899345678" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Doctors",
+                columns: new[] { "Id", "Email", "FirstName", "HospitalId", "LastName", "PhoneNumber", "Specialty" },
+                values: new object[,]
+                {
+                    { 1, "ivan.petrov@hospital.bg", "Ivan", 1, "Petrov", "0888123456", "Cardiology" },
+                    { 2, "maria.ivanova@hospital.bg", "Maria", 1, "Ivanova", "0888234567", "Neurology" },
+                    { 3, "georgi.dimitrov@hospital.bg", "Georgi", 2, "Dimitrov", "0888345678", "Surgery" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "DoctorPatients",
+                columns: new[] { "DoctorId", "PatientId" },
+                values: new object[,]
+                {
+                    { 1, 1 },
+                    { 1, 2 },
+                    { 2, 2 },
+                    { 2, 3 },
+                    { 3, 1 },
+                    { 3, 3 }
                 });
 
             migrationBuilder.CreateIndex(
