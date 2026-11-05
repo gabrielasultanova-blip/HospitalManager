@@ -14,6 +14,46 @@
     </a>
 </p>
 
+@*Forma za tyrsene*@
+<form asp-controller="Hospital" asp-action="Index" method="get">
+    <div class="row mb-3"
+
+           <div class="col-md-4">
+                <label class="form-label">Hospital Name</label>
+
+                <input type="text" 
+                    name="search" 
+                    value="@ViewBag.Search"
+                    class="form-control"
+                    placeholder="Search by name..." />
+           </div>
+
+           <div class="col-md-3">
+                <label class="form-label">Minimum Beds</label>
+
+                <input type="number" 
+                    name="minBeds" 
+                    value="@ViewBag.MinBeds"
+                    min="0"
+                    class="form-control"
+           </div>
+
+           <div class="col-md-3">
+                 <label class="form-label">Sort By</label>
+
+                 <select name="sortOrder" class="form-control">
+
+                    <option value="name"
+                        selected="@(ViewBag.SortOrder == "name")">
+                        Name A-Z
+                    </option>
+
+                    <option value="Name" @(ViewBag.SortBy == "Name" ? "selected" : "")>Name</option>
+                    <option value="BedsCount" @(ViewBag.SortBy == "BedsCount" ? "selected" : "")>Beds Count</option>
+    
+                
+</form>
+
 <table class="table">
     <thead>
         <tr>
