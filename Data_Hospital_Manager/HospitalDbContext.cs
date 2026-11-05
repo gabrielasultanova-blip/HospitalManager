@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Data_Hospital_Manager.Configurations;
 
 namespace Data_Hospital_Manager
 {
@@ -48,6 +49,9 @@ namespace Data_Hospital_Manager
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.ApplyConfiguration(new HospitalConfiguration());
+            modelBuilder.ApplyConfiguration(new DoctorConfiguration());
+            modelBuilder.ApplyConfiguration(new PatientConfiguration());
+            modelBuilder.ApplyConfiguration(new DoctorPatientConfiguration());
         }
     }
 }
