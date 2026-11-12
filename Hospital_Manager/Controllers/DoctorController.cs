@@ -41,6 +41,23 @@ namespace Hospital_Manager.Controllers
             return View(model);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetFilteredDoctors(string? search, string? specialty, string? sortOrder)
+        {
+            var doctors = await doctorService.GetAllDoctorsAsync(search, specialty, sortOrder);
+            
+            var result = doctors.Select(d => new
+            {
+                id = d.Id,
+                firstName = d.FirstName,
+                lastName = d.LastName,
+                specialty = d.Specialty,
+                hospitalName = d.Hospital.Name
+            }).ToList();
+            
+            return Json(result);
+        }
+
         public async Task<IActionResult> Details(int id)
         {
             var doctor = await doctorService.GetDoctorDetailsAsync(id);

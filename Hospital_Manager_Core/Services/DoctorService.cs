@@ -45,11 +45,46 @@ namespace Hospital_Manager_Core.Services
             }
         }
 
-        public async Task<List<Doctor>> GetAllDoctorsAsync()
+        public async Task<List<Doctor>> GetAllDoctorsAsync(string? search = null, string? specialty = null, string? sortOrder = null)
         {
-           return await context_new.Doctors
-                .Include(d => d.Hospital)
-                .ToListAsync();
+            var query = context_new.Doctors.Include(d => d.Hospital).Where(d => true);
+
+            //Search by name or last name
+            if (!string.IsNullOrEmpty(search))
+            {
+                query = query.Where(d =>
+                d.FirstName.Contains(search) ||
+                d.LastName.Contains(search));
+            }
+
+            //filter by specialty
+            if (!string.IsNullOrEmpty(specialty))
+            {
+                query = query.Where(d => d.Specialty.Contains(specialty));
+            }
+
+            //sort
+            switch(sortOrder)
+            {
+                case "name_asc":
+                    query = query.OrderBy(d => d.FirstName).ThenBy(d => d.LastName);
+                    break;
+
+                case "name_desc":
+                    query = query.OrderByDescending(d => d.FirstName).ThenByDescending(d => d.LastName);
+                    break;
+
+                case "specialty":
+                    query = query.OrderBy(d => d.Specialty).ThenBy(d => d.FirstName);
+                    break;
+
+                default:
+                    query = query.OrderBy(d => d.FirstName)
+                        .ThenBy(d => d.LastName);
+                    break;
+            }
+
+            return await query.ToListAsync();
         }
 
         public async Task<Doctor?> GetDoctorByIdAsync(int id)

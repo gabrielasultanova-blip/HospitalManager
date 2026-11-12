@@ -48,10 +48,24 @@
                         Name A-Z
                     </option>
 
-                    <option value="Name" @(ViewBag.SortBy == "Name" ? "selected" : "")>Name</option>
-                    <option value="BedsCount" @(ViewBag.SortBy == "BedsCount" ? "selected" : "")>Beds Count</option>
-    
-                
+                    <option value ="beds_asc"
+                        selected="@(ViewBag.SortOrder == "beds_asc")">
+                        Beds Ascending
+                    </option>
+
+                    <option value ="beds_desc"
+                        selected="@(ViewBag.SortOrder == "beds_desc")">
+                        Beds Descending
+                    </option>
+                 </select>
+           </div>
+
+           <div class="col-md-2 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary">
+                    Search
+                </button>
+           </div>
+    </div>        
 </form>
 
 <table class="table">
