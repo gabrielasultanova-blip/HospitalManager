@@ -179,41 +179,6 @@ namespace Data_Hospital_Manager.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Hospitals");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Address = "Plovdiv, Bulgaria",
-                            BedsCount = 300,
-                            CreatedOn = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Email = "city@hospital.bg",
-                            IsDeleted = false,
-                            Name = "City Hospital",
-                            PhoneNumber = "032123456"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Address = "Sofia, Bulgaria",
-                            BedsCount = 500,
-                            CreatedOn = new DateTime(2025, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Email = "central@hospital.bg",
-                            IsDeleted = false,
-                            Name = "Central Hospital",
-                            PhoneNumber = "029876543"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Address = "Stara Zagora, Bulgaria",
-                            BedsCount = 250,
-                            CreatedOn = new DateTime(2025, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Email = "university@hospital.bg",
-                            IsDeleted = false,
-                            Name = "University Hospital",
-                            PhoneNumber = "042123456"
-                        });
                 });
 
             modelBuilder.Entity("Data_Hospital_Manager.Entities.Patient", b =>
